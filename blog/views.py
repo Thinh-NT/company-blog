@@ -1,8 +1,14 @@
-from django.core import paginator
+from django.db.models import Count, Q
 from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Post
 from marketing.models import Signup
+
+
+def get_category_count():
+    queryset = Post.objects.values(
+        'categories__title').annotate(Count('categories__title'))
+    return queryset
 
 
 def index(request):
@@ -21,6 +27,7 @@ def index(request):
 
 
 def blog(request):
+    category_count = get_category_count()
     most_recent = Post.objects.order_by('-timestamp')[:3]
     articles_list = Post.objects.all()
     paginator = Paginator(articles_list, 4)
@@ -35,10 +42,25 @@ def blog(request):
     context = {
         'most_recent': most_recent,
         'queryset': paginated_queryset,
-        'page_request_var': page_request_var
+        'page_request_var': page_request_var,
+        'category_count': category_count,
     }
     return render(request, "blog/blog.html", context)
 
 
 def post(request, id):
-    return render(request, "blog/post.html", {'id': id})
+    return render(request, "blog/post.html", {})
+
+
+def search(request):
+    queryset = Post.objects.all()
+    query = request.GET.get('q')
+    if query:
+        queryset = queryset.filter(
+            Q(title__icontains=query) | Q(overview__icontains=query)
+        ).distinct()
+
+    context = {
+        'queryset': queryset
+    }
+    return render(request, 'blog/search_result.html', context)
