@@ -1,8 +1,9 @@
 from django.db.models import Count, Q
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.urls.base import reverse
 from .models import Post
-from .forms import CommentForm
+from .forms import CommentForm, PostForm
 from marketing.models import Signup
 
 
@@ -30,7 +31,7 @@ def index(request):
 def blog(request):
     category_count = get_category_count()
     most_recent = Post.objects.order_by('-timestamp')[:3]
-    articles_list = Post.objects.all()
+    articles_list = Post.objects.all().order_by('-timestamp')
     paginator = Paginator(articles_list, 4)
     page_request_var = 'page'
     page = request.GET.get(page_request_var)
@@ -59,6 +60,9 @@ def post(request, id):
             form.instance.user = request.user
             form.instance.post = post
             form.save()
+            return redirect(reverse('detail-post', kwargs={
+                'id': post.id
+            }))
     context = {
         'post': post,
         'category_count': category_count,
@@ -66,6 +70,30 @@ def post(request, id):
         'form': form
     }
     return render(request, "blog/post.html", context)
+
+
+def update_post(request, id):
+    pass
+
+
+def delete_post(request, id):
+    pass
+
+
+def create_post(request):
+    form = PostForm(request.POST or None, request.FILES or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return redirect(reverse("detail_post", kwargs={
+                'id': form.instance.id,
+            }))
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'blog/create_post.html', context)
 
 
 def search(request):
