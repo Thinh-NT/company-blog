@@ -19,7 +19,7 @@
         <div class="container">
             <!-- Navbar Brand -->
             <div class="navbar-header d-flex align-items-center justify-content-between">
-                <a href="/" class="navbar-brand">Bootstrap Blog</a>
+                <a href="/" class="navbar-brand">HOME</a>
                 <button type="button" data-toggle="collapse" data-target="#navbarcollapse"
                     aria-controls="navbarcollapse" aria-expanded="false" aria-label="Toggle navigation"
                     class="navbar-toggler"><span></span><span></span><span></span></button>
@@ -27,17 +27,27 @@
             <!-- Navbar Menu -->
             <div id="navbarcollapse" class="collapse navbar-collapse">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item"><a href="/" class="nav-link ">Home</a>
-                    </li>
                     <li class="nav-item"><a href="{% url 'blog' %}" class="nav-link active ">Blog</a>
                     </li>
                     <li class="nav-item"><a href="{% url 'detail-post' id=1 %}" class="nav-link ">Post</a>
                     </li>
                     <li class="nav-item"><a href="#" class="nav-link ">Contact</a>
                     </li>
+                    {% if not request.user.is_authenticated %}
+                    <li class="nav-item" style="font-size: small;"><a href="{% url 'account_login' %}"
+                            class="nav-link">Login</a>
+                    </li>
+                    <li class="nav-item" style="font-size: small;"><a href="{% url 'account_signup' %}"
+                            class="nav-link">Signup</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item" style="font-size: small;"><a href="{% url 'account_logout' %}"
+                            class="nav-link">Logout</a>
+                    </li>
+                    {% endif %}
+                    <div class=" navbar-text"><a href="#" class="search-btn"><i class="icon-search-1"></i></a>
+                    </div>
                 </ul>
-                <div class="navbar-text"><a href="#" class="search-btn"><i class="icon-search-1"></i></a></div>
-                <ul class="langs navbar-text"><a href="#" class="active">EN</a><span> </span><a href="#">ES</a></ul>
             </div>
         </div>
     </nav>
