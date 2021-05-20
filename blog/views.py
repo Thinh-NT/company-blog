@@ -6,7 +6,8 @@ from django.urls.base import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.generic import UpdateView, DeleteView
 from django.contrib import messages
-from .models import Author, Post
+from django.views.decorators.csrf import csrf_protect
+from .models import Author, Category, Post
 from .forms import CommentForm, PostForm, AuthorForm
 from marketing.models import Signup
 
@@ -122,8 +123,13 @@ def profile(request):
     else:
         p_form = AuthorForm(instance=request.user.author)
 
+    posts = Post.objects.all().filter(author=request.user.author)[:3]
+    category_count = posts.values(
+        'categories__title').annotate(Count('categories__title'))
     context = {
         "p_form": p_form,
+        "category_count": category_count,
+        "posts": posts
     }
     return render(request, "blog/profile.html", context)
 
@@ -140,6 +146,16 @@ def search(request):
         'queryset': queryset
     }
     return render(request, 'blog/search_result.html', context)
+
+
+def category_posts_view(request, category):
+    category = Category.objects.get(title=category)
+    queryset = category.post.all()
+
+    context = {
+        'queryset': queryset
+    }
+    return render(request, 'blog/category_posts.html', context)
 
 
 def post_update(request, id):

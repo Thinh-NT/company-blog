@@ -32,7 +32,7 @@ class Post(models.Model):
     comment_count = models.IntegerField(default=0)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     thumbnail = models.ImageField()
-    categories = models.ManyToManyField(Category)
+    categories = models.ManyToManyField(Category, related_name='post')
     featured = models.BooleanField(default=True)
     previous_post = models.ForeignKey(
         'self', related_name='previous', on_delete=models.SET_NULL, blank=True, null=True)

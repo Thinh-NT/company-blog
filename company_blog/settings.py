@@ -82,6 +82,7 @@ TEMPLATES = [
 TINYMCE_DEFAULT_CONFIG = {
     'cleanup_on_startup': True,
     'custom_undo_redo_levels': 20,
+    'images_upload_url': '/media/',
     'selector': 'textarea',
     'theme': 'modern',
     'plugins': '''
@@ -91,19 +92,20 @@ TINYMCE_DEFAULT_CONFIG = {
             visualchars code fullscreen autolink lists  charmap print  hr
             anchor pagebreak
             ''',
+    # 'toolbar1': '''
+    #         fullscreen preview bold italic underline | fontselect,
+    #         fontsizeselect  | forecolor backcolor | alignleft alignright |
+    #         aligncenter alignjustify | indent outdent | bullist numlist table |
+    #         | link image media |
+    #         ''',
     'toolbar1': '''
-            fullscreen preview bold italic underline | fontselect,
-            fontsizeselect  | forecolor backcolor | alignleft alignright |
-            aligncenter alignjustify | indent outdent | bullist numlist table |
-            | link image media | codesample |
-            ''',
-    'toolbar2': '''
-            visualblocks visualchars |
-            charmap hr pagebreak nonbreaking anchor |  code |
+            fullscreen visualblocks visualchars |
+            charmap hr pagebreak nonbreaking anchor |  code | codesample |
             ''',
     'contextmenu': 'formats | link image',
     'menubar': True,
     'statusbar': True,
+    'fullscreen_native': False
 }
 
 WSGI_APPLICATION = "company_blog.wsgi.application"

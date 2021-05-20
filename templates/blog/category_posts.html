@@ -1,0 +1,49 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Latest Posts -->
+        <main class="posts-listing col-lg-8">
+            <div class="container">
+                <div class="row">
+                    <!-- post -->
+                    {% for article in queryset %}
+                    <div class="post col-xl-6">
+                        <div class="post-thumbnail"><a href="{{ article.get_absolute_url }}"><img
+                                    src="{{ article.thumbnail.url }}" alt="..." class="img-fluid"></a></div>
+                        <div class="post-details">
+                            <div class="post-meta d-flex justify-content-between">
+                                <div class="date meta-last">{{ article.timestamp }}</div>
+                                <div class="category">
+                                    {% for category in article.categories.all %}
+                                    <a href="{% url 'category-posts' category=category %}">{{ category }}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <a href="{{ article.get_absolute_url }}">
+                                <h3 class="h4">{{ article.title }}</h3>
+                            </a>
+                            <p class="text-muted">{{ article.overview }}</p>
+                            <footer class="post-footer d-flex align-items-center"><a href="#"
+                                    class="author d-flex align-items-center flex-wrap">
+                                    <div class="avatar"><img src="{{ article.author.profile_picture.url }}" alt="..."
+                                            class="img-fluid">
+                                    </div>
+                                    <div class="title"><span>{{ article.author }}</span></div>
+                                </a>
+                                <div class="date"><i class="icon-clock"></i>{{ article.timestamp | timesince }} ago
+                                </div>
+                                <div class="comments meta-last"><i class="icon-comment"></i>{{ article.comment_count }}
+                                </div>
+                            </footer>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+{% endblock content %}

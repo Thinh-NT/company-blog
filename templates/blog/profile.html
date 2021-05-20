@@ -2,22 +2,78 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="content-section col-8">
-    <div class="media">
-        <img class="rounded-circle account-img" src="{{ request.user.author.profile_picture.url }}">
-        <div class="media-body">
-            <h2 class="account-heading">{{ user.username }}</h2>
-            <p class="text-secondary">{{ user.email }}</p>
-        </div>
+<div class="container">
+    <div class="row">
+        <!-- Latest Posts -->
+        <main class="posts-listing col-lg-8">
+            <div class="container">
+                <div class="row">
+                    <div class="media">
+                        <img class="rounded-circle account-img" src="{{ request.user.author.profile_picture.url }}">
+                        <div class="media-body">
+                            <h2 class="account-heading">{{ user.username }}</h2>
+                            <p class="text-secondary">{{ user.email }}</p>
+                        </div>
+                    </div>
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <fieldset class="form-group">
+                            {{ p_form | crispy }}
+                        </fieldset>
+                        <div class="form-group">
+                            <button class="btn btn-outline-info" type="submit">UPDATE</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+        <aside class="col-lg-4">
+            <!-- Widget [Search Bar Widget]-->
+            <div class="widget search">
+                <header>
+                    <h3 class="h6">Search the blog</h3>
+                </header>
+                <form action="{% url 'search' %}" class="search-form">
+                    <div class="form-group">
+                        <input type="text" name="q" placeholder="What are you looking for?">
+                        <button type="submit" class="submit"><i class="icon-search"></i></button>
+                    </div>
+                </form>
+            </div>
+            <!-- Widget [Latest Posts Widget]        -->
+            <div class="widget latest-posts">
+                <header>
+                    <h3 class="h6">Your posts</h3>
+                </header>
+                <div class="blog-posts">
+                    {% for post in posts %}
+                    <a href="{{ post.get_absolute_url }}">
+                        <div class="item d-flex align-items-center">
+                            <div class="image"><img src="{{ post.thumbnail.url }}" alt="..." class="img-fluid"></div>
+                            <div class="title"><strong>{{ post.title }}</strong>
+                                <div class="d-flex align-items-center">
+                                    <div class="views"><i class="icon-eye"></i> {{ post.views_count }}</div>
+                                    <div class="comments"><i class="icon-comment"></i>{{ post.comment_count }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                    <a class="btn btn-lg btn-primary" href="{% url 'create' %}">New post</a>
+                </div>
+            </div>
+            <!-- Widget [Categories Widget]-->
+            <div class="widget categories">
+                <header>
+                    <h3 class="h6">Categories</h3>
+                </header>
+                {% for cat in category_count %}
+                <div class="item d-flex justify-content-between">
+                    <a href="#">{{ cat.categories__title }}</a><span>{{ cat.categories__title__count }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </aside>
     </div>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <fieldset class="form-group">
-            {{ p_form | crispy }}
-        </fieldset>
-        <div class="form-group">
-            <button class="btn btn-outline-info" type="submit">UPDATE</button>
-        </div>
-    </form>
 </div>
 {% endblock content %}
