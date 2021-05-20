@@ -1,9 +1,13 @@
+from django.contrib.auth import login
 from django.db.models import Count, Q
 from django.shortcuts import redirect, render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls.base import reverse
-from .models import Post
-from .forms import CommentForm, PostForm
+from django.contrib.auth.decorators import login_required
+from django.views.generic import UpdateView, DeleteView
+from django.contrib import messages
+from .models import Author, Post
+from .forms import CommentForm, PostForm, AuthorForm
 from marketing.models import Signup
 
 
@@ -11,6 +15,13 @@ def get_category_count():
     queryset = Post.objects.values(
         'categories__title').annotate(Count('categories__title'))
     return queryset
+
+
+def get_author(user):
+    qs = Author.objects.filter(user=user)
+    if qs.exists():
+        return qs[0]
+    return None
 
 
 def index(request):
@@ -80,20 +91,41 @@ def delete_post(request, id):
     pass
 
 
+@login_required
 def create_post(request):
     form = PostForm(request.POST or None, request.FILES or None)
-    if request.method == 'POST':
+    author = get_author(request.user)
+    if request.method == "POST":
         if form.is_valid():
+            form.instance.author = author
             form.save()
-            return redirect(reverse("detail_post", kwargs={
-                'id': form.instance.id,
+            return redirect(reverse("detail-post", kwargs={
+                'id': form.instance.id
             }))
-
     context = {
         'form': form
     }
+    return render(request, "blog/create_post.html", context)
 
-    return render(request, 'blog/create_post.html', context)
+
+@login_required
+def profile(request):
+    if request.method == "POST":
+        p_form = AuthorForm(
+            request.POST, request.FILES, instance=request.user.author
+        )
+        if p_form.is_valid():
+            p_form.save()
+            messages.success(request, f"You account has been updated")
+            return redirect("profile")
+
+    else:
+        p_form = AuthorForm(instance=request.user.author)
+
+    context = {
+        "p_form": p_form,
+    }
+    return render(request, "blog/profile.html", context)
 
 
 def search(request):
@@ -108,3 +140,63 @@ def search(request):
         'queryset': queryset
     }
     return render(request, 'blog/search_result.html', context)
+
+
+def post_update(request, id):
+    title = 'Update'
+    post = get_object_or_404(Post, id=id)
+    form = PostForm(
+        request.POST or None,
+        request.FILES or None,
+        instance=post)
+    author = get_author(request.user)
+    if request.method == "POST":
+        if form.is_valid():
+            form.instance.author = author
+            form.save()
+            return redirect(reverse("post-detail", kwargs={
+                'id': form.instance.id
+            }))
+    context = {
+        'title': title,
+        'form': form
+    }
+    return render(request, "blog/create_post.html", context)
+
+
+def post_delete(request, id):
+    post = get_object_or_404(Post, id=id)
+    post.delete()
+    messages.info(request, "Your post have been deleted.")
+    return redirect(reverse("blog"))
+
+
+class PostUpdateView(UpdateView):
+    model = Post
+    template_name = 'blog/create_post.html'
+    form_class = PostForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Update'
+        return context
+
+    def form_valid(self, form):
+        form.instance.author = get_author(self.request.user)
+        form.save()
+        return redirect(reverse("detail-post", kwargs={
+            'id': form.instance.id
+        }))
+
+
+class PostDeleteView(DeleteView):
+    model = Post
+    success_url = '/blog'
+    template_name = 'blog/confirm_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category_count'] = get_category_count()
+        context['most_recent'] = Post.objects.order_by('-timestamp')[:3]
+        context['title'] = 'Update'
+        return context

@@ -44,7 +44,7 @@
                 <a href="#">{{ category }}</a>
                 {% endfor %}
               </div>
-              <a href="post.html">
+              <a href="{% url 'detail-post' id=object.id %}">
                 <h2 class="h4">{{ object.title }}</h2>
               </a>
             </header>
@@ -91,8 +91,8 @@
     <div class="row">
       {% for object in latest %}
       <div class="post col-md-4">
-        <div class="post-thumbnail"><a href="post.html"><img src="{{ object.thumbnail.url }}" alt="..."
-              class="img-fluid"></a></div>
+        <div class="post-thumbnail"><a href="{% url 'detail-post' id=object.id %}"><img src="{{ object.thumbnail.url }}"
+              alt="..." class="img-fluid"></a></div>
         <div class="post-details">
           <div class="post-meta d-flex justify-content-between">
             <div class="date">{{ object.timestamp }}</div>
@@ -101,7 +101,7 @@
               <a href="#">{{ category }}</a>
               {% endfor %}
             </div>
-          </div><a href="post.html">
+          </div><a href="{% url 'detail-post' id=object.id %}">
             <h3 class="h4">{{ object.title }}</h3>
           </a>
           <p class="text-muted">{{ object.overview }}</p>

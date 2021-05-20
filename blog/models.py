@@ -8,7 +8,8 @@ User = get_user_model()
 
 
 class Author(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        User, related_name='author', on_delete=models.CASCADE, auto_created=True)
     profile_picture = models.ImageField()
 
     def __str__(self):

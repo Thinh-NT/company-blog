@@ -20,6 +20,12 @@
                 <a href="#">{{ category }}</a>
                 {% endfor %}
               </div>
+              {% if request.user.author == post.author %}
+              <div>
+                <a href="{% url 'post-update' pk=post.pk %}">Update</a>
+                <a href="{% url 'post-delete' pk=post.pk %}">Delete</a>
+              </div>
+              {% endif %}
             </div>
             <h1>{{ post.title }}<a href="#"><i class="fa fa-bookmark-o"></i></a></h1>
             <div class="post-footer d-flex align-items-center flex-column flex-sm-row"><a href="#"
@@ -58,8 +64,14 @@
               <div class="comment">
                 <div class="comment-header d-flex justify-content-between">
                   <div class="user d-flex align-items-center">
+                    {% if comment.user.author.profile_picture %}
                     <div class="image"><img src="{{ comment.user.author.profile_picture.url }}" alt="..."
                         class="img-fluid rounded-circle"></div>
+                    {% else %}
+                    <div class="image"><img
+                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSUs6kZJz0smZ-8lI0DQUl3vu58tptuiSAoA&usqp=CAU"
+                        alt="..." class="img-fluid rounded-circle"></div>
+                    {% endif %}
                     <div class="title"><strong>{{ comment.user.username }}</strong><span
                         class="date">{{comment.timestamp|timesince}} ago</span>
                     </div>

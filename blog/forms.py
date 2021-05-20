@@ -1,6 +1,6 @@
 from django import forms
 from tinymce import TinyMCE
-from .models import Comment, Post, Comment
+from .models import Comment, Post, Comment, Author
 
 
 class TinyMCEWidget(TinyMCE):
@@ -32,3 +32,10 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ('content', )
+
+
+class AuthorForm(forms.ModelForm):
+
+    class Meta:
+        model = Author
+        fields = ('profile_picture', )
