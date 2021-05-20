@@ -64,6 +64,8 @@ def blog(request):
 
 def post(request, id):
     post = get_object_or_404(Post, id=id)
+    post.views_count += 1
+    post.save()
     category_count = get_category_count()
     most_recent = Post.objects.order_by('-timestamp')[:3]
     form = CommentForm(request.POST or None)
@@ -82,14 +84,6 @@ def post(request, id):
         'form': form
     }
     return render(request, "blog/post.html", context)
-
-
-def update_post(request, id):
-    pass
-
-
-def delete_post(request, id):
-    pass
 
 
 @login_required
