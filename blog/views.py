@@ -30,9 +30,17 @@ def index(request):
     latest = Post.objects.order_by('-timestamp')[0:3]
     if request.method == 'POST':
         email = request.POST['email']
-        new_signup = Signup()
-        new_signup.email = email
-        new_signup.save()
+        try:
+            Signup.objects.get(email=email)
+            messages.info(request, "You're already subcribed, thanks though.")
+            return redirect('index')
+        except Signup.DoesNotExist:
+            new_signup = Signup()
+            new_signup.email = email
+            new_signup.save()
+            messages.success(
+                request, "Thank you for your subscription, now you'll be charge 15$ a month...")
+            return redirect('index')
     context = {
         'featured': featured,
         'latest': latest

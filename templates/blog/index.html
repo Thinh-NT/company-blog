@@ -41,7 +41,7 @@
             <header class="post-header">
               <div class="category">
                 {% for category in object.categories.all %}
-                <a href="#">{{ category }}</a>
+                <a href="{% url 'category-posts' category=category %}">{{ category }}</a>
                 {% endfor %}
               </div>
               <a href="{% url 'detail-post' id=object.id %}">

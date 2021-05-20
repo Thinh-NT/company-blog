@@ -8,17 +8,25 @@
         <main class="posts-listing col-lg-8">
             <div class="container">
                 <div class="row">
+                    <div class="media-body">
+                        <h2 class="account-heading">{{ user.username }}</h2>
+                        <p class="text-secondary">{{ user.email }}</p>
+                    </div>
                     <div class="media">
-                        <img class="rounded-circle account-img" src="{{ request.user.author.profile_picture.url }}">
-                        <div class="media-body">
-                            <h2 class="account-heading">{{ user.username }}</h2>
-                            <p class="text-secondary">{{ user.email }}</p>
-                        </div>
+                        <img class="rounded-circle account-img" style="width: 80%;"
+                            src="{{ request.user.author.profile_picture.url }}">
+
                     </div>
                     <form method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
                         <fieldset class="form-group">
-                            {{ p_form | crispy }}
+                            <div id="div_id_profile_picture" class="form-group">
+                                <div class="">
+                                    Change avatar:
+                                    <input type="file" name="profile_picture" accept="image/*"
+                                        class="clearablefileinput form-control-file" id="id_profile_picture">
+                                </div>
+                            </div>
                         </fieldset>
                         <div class="form-group">
                             <button class="btn btn-outline-info" type="submit">UPDATE</button>
@@ -43,7 +51,12 @@
             <!-- Widget [Latest Posts Widget]        -->
             <div class="widget latest-posts">
                 <header>
+
+                    {% if not posts %}
+                    <h3 class="h6">You haven't post anything yet.</h3>
+                    {% else %}
                     <h3 class="h6">Your posts</h3>
+                    {% endif %}
                 </header>
                 <div class="blog-posts">
                     {% for post in posts %}
@@ -69,7 +82,10 @@
                 </header>
                 {% for cat in category_count %}
                 <div class="item d-flex justify-content-between">
-                    <a href="#">{{ cat.categories__title }}</a><span>{{ cat.categories__title__count }}</span>
+                    <a href="{% url 'category-posts' category=cat.categories__title %}">
+                        {{ cat.categories__title }}
+                    </a>
+                    <span>{{ cat.categories__title__count }}</span>
                 </div>
                 {% endfor %}
             </div>

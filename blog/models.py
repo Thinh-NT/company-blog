@@ -1,7 +1,14 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from tinymce import HTMLField
+from allauth.account.signals import user_signed_up
+from allauth.socialaccount.signals import pre_social_login, social_account_added
+
+
+from PIL import Image
+import requests
 
 
 User = get_user_model()
@@ -73,3 +80,41 @@ class Comment(models.Model):
 
     def __str__(self) -> str:
         return self.user.username
+
+
+@receiver(user_signed_up)
+def set_initial_user_names(request, user=User, sociallogin=None, **kwargs):
+    """
+    When a social account is created successfully and this signal is received,
+    django-allauth passes in the sociallogin param, giving access to metadata on the remote account, e.g.:
+
+    sociallogin.account.provider  # e.g. 'twitter' 
+    sociallogin.account.get_avatar_url()
+    sociallogin.account.get_profile_url()
+    sociallogin.account.extra_data['screen_name']
+
+    See the socialaccount_socialaccount table for more in the 'extra_data' field.
+
+    From http://birdhouse.org/blog/2013/12/03/django-allauth-retrieve-firstlast-names-from-fb-twitter-google/comment-page-1/
+    """
+
+    preferred_avatar_size_pixels = 256
+
+    if sociallogin:
+
+        if sociallogin.account.provider == 'facebook':
+            # verified = sociallogin.account.extra_data['verified']
+            picture_url = sociallogin.account.get_avatar_url()
+            im = Image.open(requests.get(picture_url, stream=True).raw)
+
+            author = Author()
+            author.user = user
+            author.profile_picture = im.show()
+            author.save()
+
+        if sociallogin.account.provider == 'google':
+            user.first_name = sociallogin.account.extra_data['given_name']
+            user.last_name = sociallogin.account.extra_data['family_name']
+            # verified = sociallogin.account.extra_data['verified_email']
+            picture_url = sociallogin.account.extra_data['picture']
+    print('ADDED')
