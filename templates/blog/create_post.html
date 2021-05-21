@@ -2,12 +2,12 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div id="creating_container" class="col-8 offset-2 mt-5">
+<div id="creating_container" class="col-8 offset-2 mt-3 mb-5">
     {{ form.media }}
     <form action="." method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form | crispy }}
-        <button type="submit">SUBMIT</button>
+        <button type="btn btn-primary">SUBMIT</button>
     </form>
 </div>
 {% endblock content %}
