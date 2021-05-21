@@ -109,7 +109,7 @@ def set_initial_user_names(request, user=User, sociallogin=None, **kwargs):
 
             author = Author()
             author.user = user
-            author.profile_picture = im.show()
+            author.profile_picture = im
             author.save()
 
         if sociallogin.account.provider == 'google':
