@@ -1,5 +1,12 @@
 {% extends 'blog/base.html' %}
 {% load static %}
+{% block head_title %}
+{% if title %}
+{{ title }}
+{% else %}
+Nice blog
+{% endif %}
+{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -15,7 +22,7 @@
                   alt="..." class="img-fluid"></a></div>
             <div class="post-details">
               <div class="post-meta d-flex justify-content-between">
-                <div class="date meta-last">{{ article.timestamp }}</div>
+                <div class="date meta-last"></div>
                 <div class="category">
                   {% for category in article.categories.all %}
                   <a href="% url 'category-posts' category=category %}">{{ category }}</a>

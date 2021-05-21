@@ -1,14 +1,23 @@
 {% extends 'blog/base.html' %}
 {% load static %}
 
+{% block head_title %}
+
+{% if title %}
+{{ title }}
+{% else %}
+Nice blog
+{% endif %}
+
+{% endblock %}
+
 {% block content %}
-<section
-  style="background: url({% static 'img/hero.jpg' %}); background-size: cover; background-position: center center"
+<section style="background: url({% static 'img/hero2.png' %}); background-size: cover; background-position: center"
   class="hero">
   <div class="container">
     <div class="row">
       <div class="col-lg-7">
-        <h1>Bootstrap 4 Blog - A free template by Bootstrap Temple</h1><a href="#" class="hero-link">Discover More</a>
+        <h1>Nice Blog - The place nice blogs place</h1><a href="{% url 'blog' %}" class="hero-link">Discover More</a>
       </div>
     </div><a href=".intro" class="continue link-scroll"><i class="fa fa-long-arrow-down"></i> Scroll Down</a>
   </div>
@@ -18,11 +27,8 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-8">
-        <h2 class="h3">Some great intro here</h2>
-        <p class="text-big">Place a nice <strong>introduction</strong> here <strong>to catch reader's
-            attention</strong>. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-          incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud nisi ut aliquip ex ea
-          commodo consequat. Duis aute irure dolor in reprehenderi.</p>
+        <h2 class="h3">Hi, thank you for reaching out here</h2>
+        <p class="text-big">This is where I write my blogs, it's not great, ok.</p>
       </div>
     </div>
   </div>
@@ -75,8 +81,7 @@
   <div class="container">
     <div class="row">
       <div class="col-md-7">
-        <h2>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-          dolore magna aliqua</h2><a href="#" class="hero-link">View More</a>
+        <h2>You're scrolling too fast...</h2><a href="{% url 'blog' %}" class="hero-link">View More</a>
       </div>
     </div>
   </div>
@@ -85,8 +90,7 @@
 <section class="latest-posts">
   <div class="container">
     <header>
-      <h2>Latest from the blog</h2>
-      <p class="text-big">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+      <h2>Latest from the authors</h2>
     </header>
     <div class="row">
       {% for object in latest %}
@@ -117,8 +121,7 @@
     <div class="row">
       <div class="col-md-6">
         <h2>Subscribe to Newsletter</h2>
-        <p class="text-big">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua.</p>
+        <p class="text-big">Hope you enjoy it so far, you can subribe for further update</p>
       </div>
       <div class="col-md-8">
         <div class="form-holder">

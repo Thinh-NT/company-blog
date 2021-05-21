@@ -1,6 +1,17 @@
 {% extends 'blog/base.html' %}
 {% load crispy_forms_tags %}
 
+
+
+{% block head_title %}
+{% if title %}
+{{ title }}
+{% else %}
+Nice blog
+{% endif %}
+{% endblock %}
+
+
 {% block content %}
 <div class="container">
     <div class="row">
@@ -15,8 +26,8 @@
                                 <img class="rounded-circle account-img rounded float-right" style="width: 50%;"
                                     src="{{ author.profile_picture.url }}">
                             </div>
-                            <input class="form-control mt-3" type="text" name="name" value="Thinh" maxlength="50"
-                                required="" id="id_name" style="width: 50%;">
+                            <input class="form-control mt-3" type="text" name="name" value="{{ author.name }}"
+                                maxlength="50" required="" id="id_name" style="width: 50%;">
                             <hr>
                             Change profile picture:
                             <input class="filestyle" type="file" name="profile_picture" accept="image/*"

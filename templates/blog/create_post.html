@@ -1,6 +1,13 @@
 {% extends 'blog/base.html' %}
 {% load crispy_forms_tags %}
 
+{% block head_title %}
+{% if title %}
+{{ title }}
+{% else %}
+Nice blog
+{% endif %}
+{% endblock %
 {% block content %}
 <div id="creating_container" class="col-8 offset-2 mt-3 mb-5">
     {{ form.media }}

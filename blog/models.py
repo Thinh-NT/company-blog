@@ -16,7 +16,8 @@ User = get_user_model()
 class Author(models.Model):
     user = models.OneToOneField(
         User, related_name='author', on_delete=models.CASCADE, auto_created=True)
-    profile_picture = models.ImageField()
+    profile_picture = models.ImageField(
+        blank=True, null=True, default='blog-post-4.jpeg')
     name = models.CharField(max_length=50, default='')
 
     def __str__(self):
@@ -111,6 +112,7 @@ def set_initial_user_names(request, user=None, sociallogin=None, **kwargs):
             img_temp.flush()
             author = Author()
             author.user = user
+            author.name = user.username
             author.profile_picture.save(
                 f"{{author.user.username}}_profile", File(img_temp)
             )
@@ -130,13 +132,18 @@ def set_initial_user_names(request, user=None, sociallogin=None, **kwargs):
                 f"{{author.user.username}}_profile", File(img_temp)
             )
             author.save()
-    print('ADDED')
+    else:
+        author = Author()
+        author.user = user
+        author.name = user.username
+        author.save()
 
 
-@receiver(post_save)
-def set_author_name(user=None, **kwargs):
-    if user == None:
-        user = User
+# @receiver(post_save)
+# def set_author_name(user=None, **kwargs):
+#     if user == None:
+#         user = User
 
-    author = user.author
-    author.name = user.username
+#     author = Author()
+#     author.user = user
+#     author.name = user.username

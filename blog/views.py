@@ -72,6 +72,7 @@ def blog(request):
 
 def post(request, id):
     post = get_object_or_404(Post, id=id)
+    title = post.title
     post.views_count += 1
     post.save()
     category_count = get_category_count()
@@ -89,13 +90,15 @@ def post(request, id):
         'post': post,
         'category_count': category_count,
         'most_recent': most_recent,
-        'form': form
+        'form': form,
+        'title': title
     }
     return render(request, "blog/post.html", context)
 
 
 @login_required
 def create_post(request):
+    title = 'create post'
     form = PostForm(request.POST or None, request.FILES or None)
     author = get_author(request.user)
     if request.method == "POST":
@@ -106,7 +109,8 @@ def create_post(request):
                 'id': form.instance.id
             }))
     context = {
-        'form': form
+        'form': form,
+        'title': title
     }
     return render(request, "blog/create_post.html", context)
 
@@ -133,7 +137,8 @@ def profile(request):
         "author": author,
         "p_form": p_form,
         "category_count": category_count,
-        "posts": posts
+        "posts": posts,
+        "title": "profile"
     }
     return render(request, "blog/profile.html", context)
 
@@ -147,7 +152,8 @@ def search(request):
         ).distinct()
 
     context = {
-        'queryset': queryset
+        'queryset': queryset,
+        'title': 'search'
     }
     return render(request, 'blog/search_result.html', context)
 
@@ -155,9 +161,10 @@ def search(request):
 def category_posts_view(request, category):
     category = Category.objects.get(title=category)
     queryset = category.post.all()
-
+    title = category
     context = {
-        'queryset': queryset
+        'queryset': queryset,
+        'title': title
     }
     return render(request, 'blog/category_posts.html', context)
 
@@ -218,5 +225,5 @@ class PostDeleteView(DeleteView):
         context = super().get_context_data(**kwargs)
         context['category_count'] = get_category_count()
         context['most_recent'] = Post.objects.order_by('-timestamp')[:3]
-        context['title'] = 'Update'
+        context['title'] = 'Delete'
         return context
