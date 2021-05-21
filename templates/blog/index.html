@@ -49,14 +49,14 @@
               </a>
             </header>
             <p>{{ object.overview }}</p>
-            <footer class="post-footer d-flex align-items-center"><a href="#"
-                class="author d-flex align-items-center flex-wrap">
+            <footer class="post-footer d-flex align-items-center">
+              <a class="author d-flex align-items-center flex-wrap">
                 <div class="avatar"><img src="{{ object.author.profile_picture.url }}" alt="..." class="img-fluid">
                 </div>
                 <div class="title"><span>{{ object.author }}</span></div>
               </a>
               <div class="date"><i class="icon-clock"></i>{{ object.timestamp | timesince }} ago</div>
-              <div class="comments"><i class="icon-comment"></i>{{ object.comment_count }}</div>
+              <div class="comments"><i class="icon-comment"></i>{{ object.comments.count }}</div>
             </footer>
           </div>
         </div>

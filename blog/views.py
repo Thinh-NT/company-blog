@@ -125,10 +125,12 @@ def profile(request):
     else:
         p_form = AuthorForm(instance=request.user.author)
 
+    author = request.user.author
     posts = Post.objects.all().filter(author=request.user.author)[:3]
     category_count = posts.values(
         'categories__title').annotate(Count('categories__title'))
     context = {
+        "author": author,
         "p_form": p_form,
         "category_count": category_count,
         "posts": posts

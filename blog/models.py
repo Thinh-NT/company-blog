@@ -1,15 +1,14 @@
+from allauth.account.signals import user_signed_up
+from django.db.models.signals import post_save
+from django.core.files import File
+from django.dispatch.dispatcher import receiver
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from tinymce import HTMLField
-from allauth.account.signals import user_signed_up
-from allauth.socialaccount.signals import pre_social_login, social_account_added
 
-
-from PIL import Image
-import requests
-
+from urllib.request import urlopen
+from tempfile import NamedTemporaryFile
 
 User = get_user_model()
 
@@ -18,9 +17,10 @@ class Author(models.Model):
     user = models.OneToOneField(
         User, related_name='author', on_delete=models.CASCADE, auto_created=True)
     profile_picture = models.ImageField()
+    name = models.CharField(max_length=50, default='')
 
     def __str__(self):
-        return self.user.username
+        return self.name
 
 
 class Category(models.Model):
@@ -83,12 +83,12 @@ class Comment(models.Model):
 
 
 @receiver(user_signed_up)
-def set_initial_user_names(request, user=User, sociallogin=None, **kwargs):
+def set_initial_user_names(request, user=None, sociallogin=None, **kwargs):
     """
     When a social account is created successfully and this signal is received,
     django-allauth passes in the sociallogin param, giving access to metadata on the remote account, e.g.:
 
-    sociallogin.account.provider  # e.g. 'twitter' 
+    sociallogin.account.provider  # e.g. 'twitter'
     sociallogin.account.get_avatar_url()
     sociallogin.account.get_profile_url()
     sociallogin.account.extra_data['screen_name']
@@ -98,23 +98,45 @@ def set_initial_user_names(request, user=User, sociallogin=None, **kwargs):
     From http://birdhouse.org/blog/2013/12/03/django-allauth-retrieve-firstlast-names-from-fb-twitter-google/comment-page-1/
     """
 
-    preferred_avatar_size_pixels = 256
+    if user == None:
+        user = User
 
     if sociallogin:
 
         if sociallogin.account.provider == 'facebook':
-            # verified = sociallogin.account.extra_data['verified']
             picture_url = sociallogin.account.get_avatar_url()
-            im = Image.open(requests.get(picture_url, stream=True).raw)
 
+            img_temp = NamedTemporaryFile(delete=True)
+            img_temp.write(urlopen(picture_url).read())
+            img_temp.flush()
             author = Author()
             author.user = user
-            author.profile_picture = im
+            author.profile_picture.save(
+                f"{{author.user.username}}_profile", File(img_temp)
+            )
             author.save()
-
         if sociallogin.account.provider == 'google':
             user.first_name = sociallogin.account.extra_data['given_name']
             user.last_name = sociallogin.account.extra_data['family_name']
-            # verified = sociallogin.account.extra_data['verified_email']
+
             picture_url = sociallogin.account.extra_data['picture']
+            img_temp = NamedTemporaryFile(delete=True)
+            img_temp.write(urlopen(picture_url).read())
+            img_temp.flush()
+            author = Author()
+            author.user = user
+            author.name = user.username
+            author.profile_picture.save(
+                f"{{author.user.username}}_profile", File(img_temp)
+            )
+            author.save()
     print('ADDED')
+
+
+@receiver(post_save)
+def set_author_name(user=None, **kwargs):
+    if user == None:
+        user = User
+
+    author = user.author
+    author.name = user.username

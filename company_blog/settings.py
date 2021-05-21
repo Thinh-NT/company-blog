@@ -102,7 +102,7 @@ TINYMCE_DEFAULT_CONFIG = {
     #         | link image media |
     #         ''',
     'toolbar1': '''
-            fullscreen visualblocks visualchars |
+            preview visualblocks visualchars |
             charmap hr pagebreak nonbreaking anchor |  code | codesample |
             ''',
     'contextmenu': 'formats | link image',
@@ -156,12 +156,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# AUTHENTICATION_BACKENDS = (
-#     # Needed to login by username in Django admin, regardless of `allauth`
-#     'django.contrib.auth.backends.ModelBackend',
-#     # `allauth` specific authentication methods, such as login by e-mail
-#     'allauth.account.auth_backends.AuthenticationBackend',
-# )
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
 
 
 # Internationalization
@@ -187,7 +187,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static_in_env')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-SITE_ID = 5
+SITE_ID = 1
 LOGIN_REDIRECT_URL = "/"
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
